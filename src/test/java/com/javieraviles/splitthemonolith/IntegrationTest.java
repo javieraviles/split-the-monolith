@@ -21,7 +21,7 @@ public class IntegrationTest {
 	private MockMvc mvc;
 
 	@Test
-	public void givenEmployees_whenGetEmployees_thenReturnJsonArray() throws Exception {
+	public void givenOneCustomer_whenGetCustomers_thenReturnJsonArray() throws Exception {
 
 		mvc.perform(get("/customers").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$._embedded.customers", hasSize(1)))
