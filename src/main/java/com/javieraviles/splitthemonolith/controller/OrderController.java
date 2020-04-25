@@ -5,6 +5,8 @@ import java.util.List;
 import com.javieraviles.splitthemonolith.entity.Customer;
 import com.javieraviles.splitthemonolith.entity.Order;
 import com.javieraviles.splitthemonolith.entity.Product;
+import com.javieraviles.splitthemonolith.exception.NotEnoughCreditException;
+import com.javieraviles.splitthemonolith.exception.NotEnoughStockException;
 import com.javieraviles.splitthemonolith.exception.ResourceNotFoundException;
 import com.javieraviles.splitthemonolith.repository.CustomerRepository;
 import com.javieraviles.splitthemonolith.repository.OrderRepository;
@@ -41,10 +43,20 @@ class OrderController {
     ResponseEntity<Order> createOrder(@RequestBody Order newOrder) {
         final Product product = productRepository.findById(newOrder.getProduct().getId())
                 .orElseThrow(() -> new ResourceNotFoundException());
+        if (product.getStock() < newOrder.getProductQuantity()) {
+            throw new NotEnoughStockException();
+        }
+        newOrder.setProduct(product);
         final Customer customer = customerRepository.findById(newOrder.getCustomer().getId())
                 .orElseThrow(() -> new ResourceNotFoundException());
-        newOrder.setProduct(product);
+        if (customer.getCredit() < newOrder.getTotalCost()) {
+            throw new NotEnoughCreditException();
+        }
         newOrder.setCustomer(customer);
+
+        product.setStock(product.getStock() - newOrder.getProductQuantity());
+        customer.setCredit(customer.getCredit() - newOrder.getTotalCost());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(newOrder));
     }
 
