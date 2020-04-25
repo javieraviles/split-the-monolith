@@ -48,6 +48,7 @@ public class OrderSaga {
 
         final Order createdOrder = orderRepository.save(newOrder);
 
+        // notify the customer via email -> order created!
         notificationService.sendEmailNotification(createdOrder);
         return createdOrder;
     }

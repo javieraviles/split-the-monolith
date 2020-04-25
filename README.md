@@ -27,6 +27,6 @@ REST api to create any of the aforementioned ones in `JSON` format. Have a look 
 
 Customer and Product have to be in place before creating an order. If not enough stock in the product or credit in the customer, an exception will be thrown. The core logic of the system is in the `OrderSaga.java` class.
 
-The email notifications are carried out via `NotificationService.java`. The implementation is not there, as it is not relevant here, so I will just log a message instead. BUT, it is still important the fact that the service is there as the **Branch By Abstraction** pattern will be applied over the notification feature.
+Email notifications are carried out via `NotificationService.java`. The implementation is not there, as it is not relevant here, so I will just log a message instead. BUT, it is still important the fact that the service exists as the **Branch By Abstraction** pattern will be applied over the notification feature. For the moment, a notification will be sent to the customer every time and order is created.
 
 Simple nice and clean, why splitting right? well is just an example.
