@@ -54,8 +54,8 @@ public class IntegrationTest {
 				.andExpect(status().isCreated()).andReturn();
 
 		final Order newOrder = new Order(
-				objectFromJson(resultCustomer.getResponse().getContentAsString(), Customer.class),
-				objectFromJson(resultProduct.getResponse().getContentAsString(), Product.class));
+				objectFromJson(resultCustomer.getResponse().getContentAsString(), Customer.class), 120.35,
+				objectFromJson(resultProduct.getResponse().getContentAsString(), Product.class), 1);
 
 		mvc.perform(post("/orders").content(asJsonString(newOrder)).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();

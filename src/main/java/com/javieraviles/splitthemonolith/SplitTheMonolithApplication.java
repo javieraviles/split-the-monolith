@@ -35,7 +35,7 @@ public class SplitTheMonolithApplication implements CommandLineRunner {
 		final Product chair = new Product("Chair", 12);
 		customerRepository.save(javi);
 		productRepository.save(chair);
-		orderRepository.save(new Order(javi, chair));
+		orderRepository.save(new Order(javi, 95.17, chair, 2));
 	}
 
 }

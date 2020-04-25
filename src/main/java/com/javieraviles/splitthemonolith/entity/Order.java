@@ -19,14 +19,18 @@ public class Order {
     @JoinColumn(name = "customer")
     private Customer customer;
 
+    private double totalCost;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product")
     private Product product;
 
+    private int productQuantity;
+
     public Order() {
     }
 
-    public Order(final Customer customer, final Product product) {
+    public Order(final Customer customer, final double totalCost, final Product product, final int productQuantity) {
         this.customer = customer;
         this.product = product;
     }
@@ -43,11 +47,27 @@ public class Order {
         this.customer = customer;
     }
 
+    public double getTotalCost() {
+        return totalCost;
+    }
+
+    public void setTotalCost(final double totalCost) {
+        this.totalCost = totalCost;
+    }
+
     public Product getProduct() {
         return product;
     }
 
     public void setProduct(final Product product) {
         this.product = product;
+    }
+
+    public int getProductQuantity() {
+        return productQuantity;
+    }
+
+    public void setProductQuantity(final int productQuantity) {
+        this.productQuantity = productQuantity;
     }
 }
