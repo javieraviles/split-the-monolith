@@ -9,6 +9,7 @@ import com.javieraviles.splitthemonolith.exception.ResourceNotFoundException;
 import com.javieraviles.splitthemonolith.repository.CustomerRepository;
 import com.javieraviles.splitthemonolith.repository.OrderRepository;
 import com.javieraviles.splitthemonolith.repository.ProductRepository;
+import com.javieraviles.splitthemonolith.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,9 @@ public class OrderSaga {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public Order createOrderSaga(Order newOrder) {
         final Product product = productRepository.findById(newOrder.getProduct().getId())
@@ -42,6 +46,9 @@ public class OrderSaga {
         product.decreaseStock(newOrder.getProductQuantity());
         customer.deductCredit(newOrder.getTotalCost());
 
-        return orderRepository.save(newOrder);
+        final Order createdOrder = orderRepository.save(newOrder);
+
+        notificationService.sendEmailNotification(createdOrder);
+        return createdOrder;
     }
 }
