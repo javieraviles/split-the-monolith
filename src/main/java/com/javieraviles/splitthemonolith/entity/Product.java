@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
-@Entity
+@Entity(name="products")
 public class Product {
 
     @Id

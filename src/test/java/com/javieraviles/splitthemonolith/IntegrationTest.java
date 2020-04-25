@@ -26,7 +26,6 @@ public class IntegrationTest {
 
 	@Test
 	public void givenOneCustomer_whenGetCustomers_thenReturnJsonArray() throws Exception {
-
 		mvc.perform(get("/customers").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$._embedded.customers", hasSize(1)))
 				.andExpect(jsonPath("$._embedded.customers[0].name", is("Javier Aviles")));
@@ -41,12 +40,16 @@ public class IntegrationTest {
 
 	@Test
 	public void givenOneProduct_whenGetProducts_thenReturnJsonArray() throws Exception {
-
 		mvc.perform(get("/products").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$._embedded.products", hasSize(1)))
 				.andExpect(jsonPath("$._embedded.products[0].name", is("Chair")));
 	}
 
+	@Test
+	public void givenOneOrder_whenGetOrders_thenReturnJsonArray() throws Exception {
+		mvc.perform(get("/orders").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$._embedded.orders", hasSize(1)));
+	}
 
 	private static String asJsonString(final Object obj) {
 		try {
