@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
-@Entity(name="products")
+@Entity(name = "products")
 public class Product {
 
     @Id
@@ -26,6 +26,14 @@ public class Product {
     public Product(final String name, final int stock) {
         this.name = name;
         this.stock = stock;
+    }
+
+    public boolean hasEnoughStock(final int possibleOrder) {
+        return this.stock >= possibleOrder;
+    }
+
+    public void decreaseStock(final int quantity) {
+        this.stock -= quantity;
     }
 
     public long getId() {

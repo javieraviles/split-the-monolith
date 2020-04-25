@@ -28,6 +28,14 @@ public class Customer {
         this.credit = credit;
     }
 
+    public boolean hasEnoughCredit(final double possiblePayment) {
+        return this.credit >= possiblePayment;
+    }
+
+    public void deductCredit(final double quantity) {
+        this.credit -= quantity;
+    }
+
     public long getId() {
         return id;
     }

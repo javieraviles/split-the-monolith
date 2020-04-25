@@ -1,5 +1,6 @@
 package com.javieraviles.splitthemonolith;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,7 +42,7 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void whenCreateProduct_thenReturnCreated() throws Exception {
+	public void whenCreateOrder_thenReturnCreated() throws Exception {
 		final Customer maria = new Customer("Maria Frutos", 1200.21);
 		final Product superChair = new Product("Super Chair", 40);
 
@@ -58,7 +59,51 @@ public class IntegrationTest {
 				objectFromJson(resultProduct.getResponse().getContentAsString(), Product.class), 1);
 
 		mvc.perform(post("/orders").content(asJsonString(newOrder)).contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isCreated());
+	}
+
+	@Test
+	public void whenCreateOrder_withoutEnoughStock_thenReturnBadRequestWithMessage() throws Exception {
+		final Customer maria = new Customer("Maria Frutos", 1200.21);
+		final Product superChair = new Product("Super Chair", 4);
+
+		MvcResult resultCustomer = mvc.perform(post("/customers").content(asJsonString(maria))
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated()).andReturn();
+
+		MvcResult resultProduct = mvc.perform(post("/products").content(asJsonString(superChair))
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated()).andReturn();
+
+		final Order newOrder = new Order(
+				objectFromJson(resultCustomer.getResponse().getContentAsString(), Customer.class), 962.33,
+				objectFromJson(resultProduct.getResponse().getContentAsString(), Product.class), 8);
+
+		mvc.perform(post("/orders").content(asJsonString(newOrder)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(status().reason(containsString("Not enough stock")));
+	}
+
+	@Test
+	public void whenCreateOrder_withoutEnoughCredit_thenReturnBadRequestWithMessage() throws Exception {
+		final Customer maria = new Customer("Maria Frutos", 1200.21);
+		final Product superChair = new Product("Super Chair", 40);
+
+		MvcResult resultCustomer = mvc.perform(post("/customers").content(asJsonString(maria))
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated()).andReturn();
+
+		MvcResult resultProduct = mvc.perform(post("/products").content(asJsonString(superChair))
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isCreated()).andReturn();
+
+		final Order newOrder = new Order(
+				objectFromJson(resultCustomer.getResponse().getContentAsString(), Customer.class), 1444.2,
+				objectFromJson(resultProduct.getResponse().getContentAsString(), Product.class), 12);
+
+		mvc.perform(post("/orders").content(asJsonString(newOrder)).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(status().reason(containsString("Not enough credit")));
 	}
 
 	private static String asJsonString(final Object obj) {

@@ -32,7 +32,9 @@ public class Order {
 
     public Order(final Customer customer, final double totalCost, final Product product, final int productQuantity) {
         this.customer = customer;
+        this.totalCost = totalCost;
         this.product = product;
+        this.productQuantity = productQuantity;
     }
 
     public long getId() {
