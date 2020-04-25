@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-@Entity(name="orders")
+@Entity(name = "orders")
 public class Order {
 
     @Id
@@ -31,11 +31,23 @@ public class Order {
         this.product = product;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
 
+    public void setCustomer(final Customer customer) {
+        this.customer = customer;
+    }
+
     public Product getProduct() {
         return product;
+    }
+
+    public void setProduct(final Product product) {
+        this.product = product;
     }
 }

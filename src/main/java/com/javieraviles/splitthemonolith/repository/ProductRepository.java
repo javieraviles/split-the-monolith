@@ -2,9 +2,7 @@ package com.javieraviles.splitthemonolith.repository;
 
 import com.javieraviles.splitthemonolith.entity.Product;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@RepositoryRestResource(collectionResourceRel = "products", path = "products")
-public interface ProductRepository extends CrudRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 }

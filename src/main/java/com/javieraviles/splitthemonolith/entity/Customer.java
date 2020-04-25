@@ -6,7 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
-@Entity(name="customers")
+
+@Entity(name = "customers")
 public class Customer {
 
     @Id
@@ -27,11 +28,23 @@ public class Customer {
         this.credit = credit;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
 
+    public void setName(final String name) {
+        this.name = name;
+    }
+
     public double getCredit() {
         return credit;
+    }
+
+    public void setCredit(final double credit) {
+        this.credit = credit;
     }
 }

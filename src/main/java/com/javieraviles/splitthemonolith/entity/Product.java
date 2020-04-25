@@ -28,11 +28,23 @@ public class Product {
         this.stock = stock;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public double getStock() {
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public int getStock() {
         return stock;
+    }
+
+    public void setStock(final int stock) {
+        this.stock = stock;
     }
 }

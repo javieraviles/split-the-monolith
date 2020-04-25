@@ -30,6 +30,7 @@ public class SplitTheMonolithApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
+		// Load some data in db
 		final Customer javi = new Customer("Javier Aviles", 1500.17);
 		final Product chair = new Product("Chair", 12);
 		customerRepository.save(javi);
