@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ordersms
+  name: ordersms
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ordersms
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ordersms
+    spec:
+      securityContext:
+         runAsUser: 1000300
+      containers:
+      - env:
+        - name: MONOLITH_URL
+          value: http://monolith:8080
+        image: javieraviles/ordersms
+        name: ordersms
+        securityContext:
+          allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ordersms
+  name: ordersms
+spec:
+  ports:
+  - protocol: TCP
+    port: 8090
+    targetPort: 8090
+  selector:
+    app: ordersms
+  type: LoadBalancer
