@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,7 +31,8 @@ public class OrderSaga {
 	@Autowired
 	private OrderRepository orderRepository;
 
-	final private String monolithBaseUri = "http://localhost:8080/";
+	@Value(value = "${monolith.url}")
+	private String monolithBaseUri;
 
 	@Autowired
 	private RestTemplate restTemplate;
