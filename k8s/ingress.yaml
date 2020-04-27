@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1  
+kind: Ingress  
+metadata:  
+  name: split-the-monolith-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:  
+  rules:
+  - host: split-the-monolith.com
+    http:
+      paths:
+      - path: /customers
+        backend:
+          serviceName: monolith
+          servicePort: 8080
+      - path: /products
+        backend:
+          serviceName: monolith
+          servicePort: 8080
+      - path: /orders
+        backend:
+          serviceName: ordersms
+          servicePort: 8090
