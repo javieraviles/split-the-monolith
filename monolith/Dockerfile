@@ -1,4 +1,4 @@
-FROM docker pull openjdk:11-jre-slim
+FROM openjdk:11-jre-slim
 USER root
 WORKDIR /
 COPY target/monolith.jar /opt/
