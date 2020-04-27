@@ -28,10 +28,8 @@ public class OrderSaga {
 	public Order createOrderSaga(Order newOrder) {
 		final Product product = productRepository.findById(newOrder.getProduct().getId())
 				.orElseThrow(() -> new ResourceNotFoundException());
-		newOrder.setProduct(product);
 		final Customer customer = customerRepository.findById(newOrder.getCustomer().getId())
 				.orElseThrow(() -> new ResourceNotFoundException());
-		newOrder.setCustomer(customer);
 
 		product.deductStock(newOrder.getProductQuantity());
 		/*
