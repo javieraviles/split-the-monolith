@@ -21,10 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.javieraviles.ordersms.dto.CustomerDto;
+import com.javieraviles.ordersms.dto.ProductDto;
 import com.javieraviles.ordersms.entity.Order;
-
-import dto.CustomerDto;
-import dto.ProductDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc

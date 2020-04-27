@@ -1,4 +1,4 @@
-package dto;
+package com.javieraviles.ordersms.dto;
 
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;

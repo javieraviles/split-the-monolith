@@ -16,14 +16,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.javieraviles.ordersms.dto.CustomerDto;
+import com.javieraviles.ordersms.dto.ProductDto;
 import com.javieraviles.ordersms.entity.Order;
 import com.javieraviles.ordersms.exception.NotEnoughCreditException;
 import com.javieraviles.ordersms.exception.NotEnoughStockException;
 import com.javieraviles.ordersms.exception.ResourceNotFoundException;
 import com.javieraviles.ordersms.repository.OrderRepository;
-
-import dto.CustomerDto;
-import dto.ProductDto;
 
 @Component
 public class OrderSaga {
