@@ -41,8 +41,8 @@ public class OrderSaga {
 		ProductDto product = null;
 		CustomerDto customer = null;
 		try {
-			product = fetchProduct(newOrder);
 			customer = fetchCustomer(newOrder);
+			product = fetchProduct(newOrder);
 		} catch (final ResourceNotFoundException e) {
 			throw e;
 		}
