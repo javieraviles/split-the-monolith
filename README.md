@@ -7,10 +7,12 @@ There is a whole variety of technologies out there, for this example I will use:
 
 Everything will be in the master branch, having a specific `tag` for each Phase once finished.
 
+- [split-the-monolith](#split-the-monolith)
   - [Phase 1 - THE MONOLITH](#phase-1---the-monolith)
   - [Phase 2 - Applying STRANGLER FIG](#phase-2---applying-strangler-fig)
     - [The new Microservice, OrdersMs](#the-new-microservice-ordersms)
     - [The proxy, NGINX as K8s Ingress](#the-proxy-nginx-as-k8s-ingress)
+  - [Phase 3 - Applying BRANCH BY ABSTRACTION](#phase-3---applying-branch-by-abstraction)
 
 ## Phase 1 - THE MONOLITH
 This is a very simple SpringBoot project to dispatch `Orders`. Using H2 as database for simplicity, the main class will populate some data into the database on startup for testing purposes. A customer, a product and an order.
@@ -105,3 +107,51 @@ npm install -g Newman
 newman run integrationtests/split-the-monolith.postman_collection.json -k -e integrationtests/env/K8sDev.postman_environment.json
 
 ```
+
+## Phase 3 - Applying BRANCH BY ABSTRACTION
+Remember the `NotificationService` in the monolith? well, that could very well be another microservice, just in charge of sending notifications, so the monolith does not need to have such responsibility anymore. Would be nice to spin up the new microservice and gradually switch notifications generation from monolith to this new service, using a [feature toggle](https://martinfowler.com/articles/feature-toggles.html).
+
+Based on [Martin Fowler Branch by Abstraction post](https://martinfowler.com/bliki/BranchByAbstraction.html), "While we are building the new feature we can use FeatureToggles to run the new supplier in test environments and compare its behavior to the flawed supplier".
+
+![Branch by Abstraction Pattern](https://raw.githubusercontent.com/javieraviles/split-the-monolith/master/images/branch-by-abstraction.png)
+
+And so we will do in this phase 3. After creating another SpringBoot project, the simplest one (`NotificationController` to receive a POST for notifications creation, calling a service that actually sends the notification), we will then introduce a `feature toggle` in the monolith. This way, when some credit is added to a user, depending on the value of the feature toggle, the notification will get sent through the monolith implementation (still there) or through the new service (the monolith will trigger a POST to /notificationsmsUrl) so the new microservice takes care of this.
+
+For us the feature toggle will just be an application.property called `use.notification.service`, containing a boolean:
+
+```
+@Value(value = "${use.notification.service}")
+private boolean useNotificationService;
+
+...
+
+
+if (useNotificationService) {
+  // rest call to new microservice
+  notificationsMsClient.sendNotification(notification);
+} else {
+  // monolith sends the notificaton itself
+  notificationService.sendEmailNotification(notification);
+}
+```
+
+This way, the k8s deployment yaml for the monolith will now contain an environment variable that will override the feature toggle value per environment:
+
+```
+- env:
+  - name: NOTIFICATIONSMS_URL
+    value: http://notificationsms:8070
+  - name: USE_NOTIFICATION_SERVICE
+    value: "true"
+  image: javieraviles/monolith
+  name: monolith
+  imagePullPolicy: Always
+  ports:
+    - containerPort: 8080
+  securityContext:
+    allowPrivilegeEscalation: false
+```
+
+So operations will have now the option to configure whether to use this external notifications service or not from there. The idea is to reach a point where no more clients are using the original monolith notifications feature so it can be removed.
+
+An additional `k8s/notificationsms.yaml` file has been added to deploy the new microservice. Please note the `type: ClusterIP` in there, as this notifications microservice does not need to get any external traffic, will only receieve internal requests.
