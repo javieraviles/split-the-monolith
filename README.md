@@ -43,7 +43,7 @@ The goal here is to get some responsibilities out of the original monolith, so I
 
 Based on [Martin Fowler Strangler Fig post](https://martinfowler.com/bliki/StranglerFigApplication.html), we will "gradually create a new system around the edges of the old".
 
-![Strangler Fig Pattern](https://raw.githubusercontent.com/javieraviles/split-the-monolith/master/iamges/strangler-fig.jpg)
+![Strangler Fig Pattern](https://raw.githubusercontent.com/javieraviles/split-the-monolith/master/images/strangler-fig.jpg)
 
 A proxy will still forward `/customers` and `/products` api requests to the monolith, but `/orders` should then go to the new microservice.
 
