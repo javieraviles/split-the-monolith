@@ -24,6 +24,7 @@ spec:
           value: http://monolith:8080
         image: javieraviles/ordersms
         name: ordersms
+        imagePullPolicy: Always
         securityContext:
           allowPrivilegeEscalation: false
 ---

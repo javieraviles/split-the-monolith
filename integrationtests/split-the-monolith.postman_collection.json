@@ -29,7 +29,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"Javie Gomez\",\n    \"credit\":\"2000\"\n}",
+					"raw": "{\n    \"name\": \"Javier Gomez\",\n    \"credit\":\"2000\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -592,7 +592,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"operation\":\"SUBTRACT\",\"amount\":1000}",
+					"raw": "{\"operation\":\"DEDUCT\",\"amount\":1000}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -637,7 +637,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"operation\":\"SUBTRACT\",\"amount\":10}",
+					"raw": "{\"operation\":\"DEDUCT\",\"amount\":10}",
 					"options": {
 						"raw": {
 							"language": "json"

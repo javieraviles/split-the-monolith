@@ -2,47 +2,40 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: monolith
-  name: monolith
+    app: notificationsms
+  name: notificationsms
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: monolith
+      app: notificationsms
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: monolith
+        app: notificationsms
     spec:
       securityContext:
          runAsUser: 1000300
       containers:
-      - env:
-        - name: NOTIFICATIONSMS_URL
-          value: http://notificationsms:8070
-        - name: USE_NOTIFICATION_SERVICE
-          value: "true"
-        image: javieraviles/monolith
-        name: monolith
+      - image: javieraviles/notificationsms
+        name: notificationsms
         imagePullPolicy: Always
-        ports:
-          - containerPort: 8080
         securityContext:
           allowPrivilegeEscalation: false
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: monolith
   labels:
-    app: monolith
+    app: notificationsms
+  name: notificationsms
 spec:
   ports:
   - protocol: TCP
-    port: 8080
-    targetPort: 8080
+    port: 8070
+    targetPort: 8070
   selector:
-    app: monolith
-  type: LoadBalancer
+    app: notificationsms
+  type: ClusterIP
