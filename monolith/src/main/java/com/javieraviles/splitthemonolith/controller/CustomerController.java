@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.javieraviles.splitthemonolith.dto.OperationEnum;
 import com.javieraviles.splitthemonolith.entity.Customer;
 import com.javieraviles.splitthemonolith.exception.ResourceNotFoundException;
 import com.javieraviles.splitthemonolith.repository.CustomerRepository;
@@ -60,17 +61,21 @@ class CustomerController {
 	@RequestMapping(value = "/customers/{id}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> partialUpdateGeneric(@RequestBody Map<String, String> creditUpdate,
 			@PathVariable("id") Long id) {
-
-		final Customer customer = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
-		final double creditQuantity = Double.valueOf(creditUpdate.get("amount"));
-		if (creditUpdate.get("operation").equals("ADD")) {
-			customer.addCredit(creditQuantity);
-			// notify customer some credit was added
-			notificationService.sendEmailNotification(customer);
-		} else {
-			customer.deductCredit(creditQuantity);
+		try {
+			final Customer customer = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
+			final double creditQuantity = Double.valueOf(creditUpdate.get("amount"));
+			final OperationEnum operation = OperationEnum.valueOf(creditUpdate.get("operation"));
+			if (operation == OperationEnum.ADD) {
+				customer.addCredit(creditQuantity);
+				// notify customer some credit was added
+				notificationService.sendEmailNotification(customer);
+			} else {
+				customer.deductCredit(creditQuantity);
+			}
+			return ResponseEntity.ok(repository.save(customer));
+		} catch (final IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body("wrong operation");
 		}
-		return ResponseEntity.ok(repository.save(customer));
 	}
 
 	@DeleteMapping("/customers/{id}")

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.javieraviles.splitthemonolith.dto.OperationEnum;
 import com.javieraviles.splitthemonolith.entity.Product;
 import com.javieraviles.splitthemonolith.exception.ResourceNotFoundException;
 import com.javieraviles.splitthemonolith.repository.ProductRepository;
@@ -56,15 +57,19 @@ class ProductController {
 	@RequestMapping(value = "/products/{id}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> partialUpdateGeneric(@RequestBody Map<String, String> stockUpdate,
 			@PathVariable("id") Long id) {
-
-		final Product product = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
-		final int stockQuantity = Integer.valueOf(stockUpdate.get("amount"));
-		if (stockUpdate.get("operation").equals("ADD")) {
-			product.addStock(stockQuantity);
-		} else {
-			product.deductStock(stockQuantity);
+		try {
+			final Product product = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException());
+			final int stockQuantity = Integer.valueOf(stockUpdate.get("amount"));
+			final OperationEnum operation = OperationEnum.valueOf(stockUpdate.get("operation"));
+			if (operation == OperationEnum.ADD) {
+				product.addStock(stockQuantity);
+			} else {
+				product.deductStock(stockQuantity);
+			}
+			return ResponseEntity.ok(repository.save(product));
+		} catch (final IllegalArgumentException e) {
+			return ResponseEntity.badRequest().body("wrong operation");
 		}
-		return ResponseEntity.ok(repository.save(product));
 	}
 
 	@DeleteMapping("/products/{id}")

@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.javieraviles.ordersms.dto.CustomerDto;
+import com.javieraviles.ordersms.dto.OperationEnum;
 import com.javieraviles.ordersms.dto.ProductDto;
 import com.javieraviles.ordersms.entity.Order;
 import com.javieraviles.ordersms.exception.NotEnoughCreditException;
@@ -52,8 +53,8 @@ public class OrderSaga {
 			throw new NotEnoughCreditException();
 		}
 		try {
-			modifyProductStock(product.getId(), "DEDUCT", newOrder.getProductQuantity());
-			modifyCustomerCredit(customer.getId(), "DEDUCT", newOrder.getTotalCost());
+			modifyProductStock(product.getId(), OperationEnum.DEDUCT.toString(), newOrder.getProductQuantity());
+			modifyCustomerCredit(customer.getId(), OperationEnum.DEDUCT.toString(), newOrder.getTotalCost());
 		} catch (final NotEnoughCreditException e) {
 			/*
 			 * here there is no transaction as before in the monolith, therefore can happen
@@ -63,7 +64,7 @@ public class OrderSaga {
 			 * problem is we have to do the saga compensation for stock, as it was already
 			 * deducted from monolith's database
 			 */
-			modifyProductStock(product.getId(), "ADD", newOrder.getProductQuantity());
+			modifyProductStock(product.getId(), OperationEnum.ADD.toString(), newOrder.getProductQuantity());
 			// of course after performing the compensation, rethrow the business exeption
 			throw e;
 
