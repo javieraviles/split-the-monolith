@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.javieraviles.splitthemonolith.dto.NotificationDto;
 import com.javieraviles.splitthemonolith.dto.OperationEnum;
 import com.javieraviles.splitthemonolith.entity.Customer;
 import com.javieraviles.splitthemonolith.exception.ResourceNotFoundException;
@@ -67,8 +68,11 @@ class CustomerController {
 			final OperationEnum operation = OperationEnum.valueOf(creditUpdate.get("operation"));
 			if (operation == OperationEnum.ADD) {
 				customer.addCredit(creditQuantity);
-				// notify customer some credit was added
-				notificationService.sendEmailNotification(customer);
+				/*
+				 * notify customer some credit was added; in the real world we would pass an
+				 * email, not the customer name, but that data was not included in the model
+				 */
+				notificationService.sendEmailNotification(new NotificationDto(customer.getName(), creditQuantity));
 			} else {
 				customer.deductCredit(creditQuantity);
 			}

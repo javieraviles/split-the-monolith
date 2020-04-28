@@ -1,10 +1,10 @@
-package com.javieraviles.splitthemonolith.service;
+package com.javieraviles.notificationsms.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.javieraviles.splitthemonolith.dto.NotificationDto;
+import com.javieraviles.notificationsms.dto.NotificationDto;
 
 @Component
 public class NotificationService {
