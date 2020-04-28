@@ -23,6 +23,7 @@ import com.javieraviles.splitthemonolith.dto.OperationEnum;
 import com.javieraviles.splitthemonolith.entity.Customer;
 import com.javieraviles.splitthemonolith.exception.ResourceNotFoundException;
 import com.javieraviles.splitthemonolith.repository.CustomerRepository;
+import com.javieraviles.splitthemonolith.restclient.NotificationsMicroserviceClient;
 import com.javieraviles.splitthemonolith.service.NotificationService;
 
 @RestController
@@ -36,6 +37,9 @@ class CustomerController {
 
 	@Autowired
 	private NotificationService notificationService;
+
+	@Autowired
+	private NotificationsMicroserviceClient notificationsMsClient;
 
 	@GetMapping("/customers")
 	List<Customer> getAll() {
@@ -76,10 +80,11 @@ class CustomerController {
 				 * notify customer some credit was added; in the real world we would pass an
 				 * email, not the customer name, but that data was not included in the model
 				 */
+				final NotificationDto notification = new NotificationDto(customer.getName(), creditQuantity);
 				if (useNotificationService) {
-					// TODO: implement rest call to notificaions service
+					notificationsMsClient.sendNotification(notification);
 				} else {
-					notificationService.sendEmailNotification(new NotificationDto(customer.getName(), creditQuantity));
+					notificationService.sendEmailNotification(notification);
 				}
 			} else {
 				customer.deductCredit(creditQuantity);

@@ -86,31 +86,33 @@ public class OrderSaga {
 	private void modifyCustomerCredit(final long customerId, final String operation, final double totalCost)
 			throws RestClientException, JsonProcessingException {
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
 		final Map<String, String> creditUpdate = new HashMap<>();
 		creditUpdate.put("operation", operation);
 		creditUpdate.put("amount", String.valueOf(totalCost));
-		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(creditUpdate, headers);
+		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(creditUpdate, getJsonHeaders());
 
 		restTemplate.exchange(monolithBaseUri + "customers/" + customerId, HttpMethod.PATCH, requestEntity,
 				CustomerDto.class);
 
 	}
 
+	
+
 	private void modifyProductStock(final long productId, final String operation, final int productQuantity)
 			throws RestClientException, JsonProcessingException {
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		final Map<String, String> stockUpdate = new HashMap<>();
 		stockUpdate.put("operation", operation);
 		stockUpdate.put("amount", String.valueOf(productQuantity));
-		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(stockUpdate, headers);
+		HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(stockUpdate, getJsonHeaders());
 
 		restTemplate.exchange(monolithBaseUri + "products/" + productId, HttpMethod.PATCH, requestEntity,
 				ProductDto.class);
+	}
+	
+	private HttpHeaders getJsonHeaders() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		return headers;
 	}
 }
