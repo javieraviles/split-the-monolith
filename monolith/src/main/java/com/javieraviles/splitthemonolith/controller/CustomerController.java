@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,9 @@ import com.javieraviles.splitthemonolith.service.NotificationService;
 
 @RestController
 class CustomerController {
+
+	@Value(value = "${use.notification.service}")
+	private boolean useNotificationService;
 
 	@Autowired
 	private CustomerRepository repository;
@@ -72,7 +76,11 @@ class CustomerController {
 				 * notify customer some credit was added; in the real world we would pass an
 				 * email, not the customer name, but that data was not included in the model
 				 */
-				notificationService.sendEmailNotification(new NotificationDto(customer.getName(), creditQuantity));
+				if (useNotificationService) {
+					// TODO: implement rest call to notificaions service
+				} else {
+					notificationService.sendEmailNotification(new NotificationDto(customer.getName(), creditQuantity));
+				}
 			} else {
 				customer.deductCredit(creditQuantity);
 			}
