@@ -97,14 +97,14 @@ Please note that both services had also been Dockerized including a `Dockerfile`
 
 Now is all set, functionality remains the same as in the monolith, and we have two microservices, each one taking care of a task, all behind a proxy, nice!!
 
-In order to have some **"end to end"** tests, not only integration tests on each microservice, I've added a Postman collection in the `integrationtests` directory, which can be run against a classic local environment, starting up both microservices from your IDE in localhost (here tell postman collection to use the `env/LocalDev.json` environment file) or against a local k8s using ingress (here tell postman collection to use the `env/K8sDev.json` environment file).
+In order to have some **"end to end"** tests, not only integration tests on each microservice, I've added a Postman collection in the `e2e` directory, which can be run against a classic local environment, starting up both microservices from your IDE in localhost (here tell postman collection to use the `env/LocalDev.json` environment file) or against a local k8s using ingress (here tell postman collection to use the `env/K8sDev.json` environment file).
 
 Use Newman to easily execute them:
 
 ```
 npm install -g Newman
 
-newman run integrationtests/split-the-monolith.postman_collection.json -k -e integrationtests/env/K8sDev.postman_environment.json
+newman run e2e/split-the-monolith.postman_collection.json -k -e e2e/env/K8sDev.postman_environment.json
 
 ```
 
