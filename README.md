@@ -3,7 +3,7 @@ Everyday is getting more and more popular and, **sometimes**, worthy and useful 
 
 There is a whole variety of technologies out there, for this example I will use:
  - SpringBoot (microservices themselves).
- - After split -> Docker, K8s, some Api Gateway (nginx or istio, will see) to redirect traffic to each ms.
+ - After split -> Docker, K8s, and NGINX as ingress proxy to redirect traffic to each ms.
 
 Everything will be in the master branch, having a specific `tag` for each Phase once finished.
 
