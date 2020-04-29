@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,22 +56,26 @@ public class OrderSaga {
 		try {
 			modifyProductStock(product.getId(), OperationEnum.DEDUCT.toString(), newOrder.getProductQuantity());
 			modifyCustomerCredit(customer.getId(), OperationEnum.DEDUCT.toString(), newOrder.getTotalCost());
-		} catch (final NotEnoughCreditException e) {
-			/*
-			 * here there is no transaction as before in the monolith, therefore can happen
-			 * that after checking there is enough customer credit, when actually deducting
-			 * the credit from the monolith, another order took place and there is no credit
-			 * anymore. For such scenario, a NotEnoughCreditException will be thrown; the
-			 * problem is we have to do the saga compensation for stock, as it was already
-			 * deducted from monolith's database
-			 */
-			modifyProductStock(product.getId(), OperationEnum.ADD.toString(), newOrder.getProductQuantity());
-			// of course after performing the compensation, rethrow the business exeption
-			throw e;
-
-		} catch (final RestClientException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Product/Customer service not available",
-					e.getCause());
+		} catch (final HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
+				// any of the stock or credit modifications failed
+				if (e.getMessage().contains("NotEnoughCreditException")) {
+					/*
+					 * here there is no transaction as before in the monolith, therefore can happen
+					 * that after checking there is enough customer credit, when actually deducting
+					 * the credit from the monolith, another order took place and there is no credit
+					 * anymore. For such scenario, a NotEnoughCreditException will be thrown; the
+					 * problem is we have to do the saga compensation for stock, as it was already
+					 * deducted from monolith's database
+					 */
+					modifyProductStock(product.getId(), OperationEnum.ADD.toString(), newOrder.getProductQuantity());
+				}
+				// whether a compensation was needed or not, rethrow business exception
+				throw new ResponseStatusException(e.getStatusCode(), e.getMessage(), e.getCause());
+			} else {
+				throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, "Product/Customer service not available",
+						e.getCause());
+			}
 		}
 		return orderRepository.save(newOrder);
 	}
@@ -96,8 +101,6 @@ public class OrderSaga {
 
 	}
 
-	
-
 	private void modifyProductStock(final long productId, final String operation, final int productQuantity)
 			throws RestClientException, JsonProcessingException {
 
@@ -109,7 +112,7 @@ public class OrderSaga {
 		restTemplate.exchange(monolithBaseUri + "products/" + productId, HttpMethod.PATCH, requestEntity,
 				ProductDto.class);
 	}
-	
+
 	private HttpHeaders getJsonHeaders() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
